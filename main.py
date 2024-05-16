@@ -10,7 +10,6 @@ class Database:
     def __create_table(self):
         sql = self.connect_db()
         cursor = sql["cursor"]
-        
         # SQL запрос для создания таблицы users
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
@@ -24,7 +23,6 @@ class Database:
         )
         ''')
         sql["connect"].commit()  # Сохраняем изменения в базе данных
-        
         self.close_db(sql["cursor"], sql["connect"])
         
     def connect_db(self):
