@@ -9,9 +9,23 @@ class Database:
         
     def __create_table(self):
         sql = self.connect_db()
-            
-        self.close_db(sql["cursor"], sql["connect"])
+        cursor = sql["cursor"]
         
+        # SQL запрос для создания таблицы users
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_telegram INTEGER UNIQUE,
+            username TEXT,
+            last_name TEXT,
+            first_name TEXT,
+            date_registration TEXT,
+            access BOOLEAN
+        )
+        ''')
+        sql["connect"].commit()  # Сохраняем изменения в базе данных
+        
+        self.close_db(sql["cursor"], sql["connect"])
         
     def connect_db(self):
         with sqlite3.connect(self.db_name) as connect:
@@ -19,7 +33,9 @@ class Database:
         return {"connect": connect, "cursor": cursor}
     def close_db(self, cursor, connect):
         cursor.close()
+        connect.commit()  # Сохраняем изменения перед закрытием
         connect.close()
+
             
 
 class TelegramBot(Database):
