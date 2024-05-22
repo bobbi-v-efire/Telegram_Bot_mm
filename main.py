@@ -131,37 +131,15 @@ class TelegramBot(DataBase):
 
         @self.bot.message_handler(func=lambda message: True)
         def echo_all(message):
-            if message.chat.id != self.admin_chat_id:
-                id_message = self.insert_message(message)
-                    
-                self.bot.reply_to(
-                    message,
-                    "Сообщение отправлено админу!"
-                )
-                text = f'''
-Номер заявки №{id_message}
-ID пользователя: {message.from_user.id}
-Сообщение: {message.text}
-                '''
-                self.bot.send_message(self.admin_chat_id, text)
-                
-            elif message.chat.id == self.admin_chat_id and message.reply_to_message != None:
-                reply_message = message.reply_to_message.text
-                id_application = re.search(r'Номер заявки №(\d+)', reply_message).group(1)
-                id_user = re.search(r'ID пользователя: (\d+)', reply_message).group(1)
-                message_text = reply_message.split("\n")[2].split(':')[-1]
-                
-                current_text = message.text
-                
-                self.bot.send_message(
-                    id_user,
-                    f'Ответ от администратора: {current_text}',
-                    reply_to_message_id=message.reply_to_message.message_id - 2
-                )
-                
-                print(id_application, id_user, message_text)
-                
-        self.bot.polling() 
+            self.bot.reply_to(
+                message,
+                "Не понимаю..."
+            )
+            self.bot.delete_message(
+                chat_id=message.chat.id,
+                message_id=message.message_id
+            )
+        self.bot.polling()    
 
 
 TelegramBot(
