@@ -99,6 +99,16 @@ class DataBase:
         self.close(sql["cursor"], sql["connect"])
         
         return id_message
+    
+    def check_application(self, id_application: int):
+        sql = self.connect_db()
+        sql['cursor'].execute('''
+            SELECT message_text FROM messages WHERE id = ?                     
+        ''', (id_application,))
+        data_message = sql['cursor'].fetchone()
+        self.close(sql["cursor"], sql["connect"])
+        
+        return data_message
 
     def close(self, cursor, connect):
         cursor.close()
@@ -149,19 +159,21 @@ ID пользователя: {message.from_user.id}
                 reply_message = message.reply_to_message.text
                 id_application = re.search(r'Номер заявки №(\d+)', reply_message).group(1)
                 id_user = re.search(r'ID пользователя: (\d+)', reply_message).group(1)
-                message_text = reply_message.split("\n")[2].split(':')[-1]
                 
-                current_text = message.text
+                
+                id_message_user = self.check_application(id_application)
+                
                 
                 self.bot.send_message(
                     id_user,
 
-                    f'Ответ от администратора: {current_text}',
-                    reply_to_message_id=message.reply_to_message.message_id - 2
+                    f'Ответ от администратора: {message.text}',
+                    print(id_message_user[0])
+                    # reply_to_message_id=id_message_user[0]
 
                 )
                 
-                print(id_application, id_user, message_text)
+                print(id_application, id_user)
                 
         self.bot.polling() 
 
